@@ -4,8 +4,12 @@ from dotenv import load_dotenv
 import os
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+from urllib.parse import urlparse, parse_qs
+
 
 app = Flask(__name__)
+CORS(app)
 
 #load api key
 load_dotenv()
@@ -21,7 +25,17 @@ def summarize():
     url = data["url"]
 
     #video id
-    video_id = url.split("v=")[1].split("&")[0] #www.youtube.com/watch?v=  < UF8uR6Z6KLc >  &t=10s
+    ###video_id = url.split("v=")[1].split("&")[0] #www.youtube.com/watch?v=  < UF8uR6Z6KLc >  &t=10s
+    parsed_url = urlparse(url)
+    if "youtube.com" in url:
+        video_id = parse_qs(parsed_url.query)["v"][0]
+    elif "youtu.be" in url:
+        video_id = parsed_url.path[1:]
+    else:
+        return jsonify({
+            "error: Invalid YouTube URL"
+        }), 400
+
     #fetch transcript
     ytt_api = YouTubeTranscriptApi()
     transcript = ytt_api.fetch(video_id)

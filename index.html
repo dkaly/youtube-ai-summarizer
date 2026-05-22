@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> YouTube Summarizer AI </title>
+</head>
+
+<body> 
+    <h1> YouTube Summarizer AI </h1>
+
+    <input id="url" placeholder="Paste YouTube video URL here"> </input>
+    <button onclick="summarize()">Summarize</button>
+    <pre id="output"> </pre>
+
+    <script>
+        async function summarize() {
+            const url = document.getElementById("url").value;
+
+            const res = await fetch("http://127.0.0.1:5000/summarize", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ url })
+            });  
+            const data = await res.json();
+            document.getElementById("output").innerText = data.summary;
+        }
+    </script>
+
+</body>
+
+
+</html>
